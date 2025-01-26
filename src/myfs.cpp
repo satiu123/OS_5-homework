@@ -9,7 +9,7 @@ bool MyFileSystem::format(unsigned int disk_size, unsigned int inode_percentage)
 
     disk.open(disk_file_path, std::ios::in | std::ios::out | std::ios::trunc | std::ios::binary);
     if (!disk.is_open()) {
-        std::cerr << "[Error] Unable to create disk file." << std::endl;
+        std::cerr << "Unable to create disk file." << std::endl;
         return false;
     }
 
@@ -55,10 +55,10 @@ bool MyFileSystem::format(unsigned int disk_size, unsigned int inode_percentage)
 
     write_superblock();
 
-    std::cout << "[Info] File system formatted successfully." << std::endl;
-    std::cout << "[Info] Total size: " << superblock.total_size << " bytes" << std::endl;
-    std::cout << "[Info] Inode count: " << superblock.inode_count << std::endl;
-    std::cout << "[Info] Data block count: " << superblock.data_block_count << std::endl;
+    std::cout << "File system formatted successfully." << std::endl;
+    std::cout << "Total size: " << superblock.total_size << " bytes" << std::endl;
+    std::cout << "Inode count: " << superblock.inode_count << std::endl;
+    std::cout << "Data block count: " << superblock.data_block_count << std::endl;
 
     return true;
 }
@@ -69,7 +69,7 @@ bool MyFileSystem::mount() {
     }
     disk.open(disk_file_path, std::ios::in | std::ios::out | std::ios::binary);
     if (!disk.is_open()) {
-        std::cerr << "[Error] Unable to open disk file." << std::endl;
+        std::cerr << "Unable to open disk file." << std::endl;
         return false;
     }
 
@@ -78,12 +78,12 @@ bool MyFileSystem::mount() {
 
     // 验证魔数
     if (superblock.magic_number != MAGIC_NUMBER) {
-        std::cerr << "[Error] Invalid file system format." << std::endl;
+        std::cerr << "Invalid file system format." << std::endl;
         disk.close();
         return false;
     }
 
-    std::cout << "[Info] File system mounted successfully." << std::endl;
+    std::cout << "File system mounted successfully." << std::endl;
     return true;
 }
 
@@ -91,7 +91,7 @@ bool MyFileSystem::mount() {
 bool MyFileSystem::unmount() {
     if (disk.is_open()) {
         disk.close();
-        std::cout << "[Info] File system unmounted successfully." << std::endl;
+        std::cout << "File system unmounted successfully." << std::endl;
     }
     return true;
 }
@@ -139,7 +139,7 @@ void MyFileSystem::write_data_block(unsigned int block_number, const char* buffe
 // 分配一个 inode
 unsigned int MyFileSystem::allocate_inode(FileType type) {
     if (superblock.free_inode_count == 0) {
-        std::cerr << "[Error] No free inode available." << std::endl;
+        std::cerr << "No free inode available." << std::endl;
         return -1;
     }
 
@@ -153,7 +153,7 @@ unsigned int MyFileSystem::allocate_inode(FileType type) {
             return i;
         }
     }
-    std::cerr<<"[Error] Unable to allocate inode."<<std::endl;
+    std::cerr<<"Unable to allocate inode."<<std::endl;
     return -1;
 }
 // 释放一个 inode
@@ -184,7 +184,7 @@ void MyFileSystem::free_inode(unsigned int inode_number) {
 // 分配一个数据块
 unsigned int MyFileSystem::allocate_data_block() {
     if (superblock.free_data_block_count == 0) {
-        std::cerr << "[Error] No free data blocks available." << std::endl;
+        std::cerr << "No free data blocks available." << std::endl;
         return -1;
     }
 
@@ -209,7 +209,7 @@ unsigned int MyFileSystem::allocate_data_block() {
         }
     }
 
-    std::cerr << "[Error] Unable to allocate data block." << std::endl;
+    std::cerr << "Unable to allocate data block." << std::endl;
     return -1;
 }
 
@@ -279,7 +279,7 @@ int MyFileSystem::path_to_inode(const std::string& path) {
         // 查找当前目录下的目录项
         Inode current_inode = read_inode(current_inode_number);
         if (current_inode.type != DIRECTORY) {
-            std::cerr << "[Error] " << current_path << " is not a directory." << std::endl;
+            std::cerr << "" << current_path << " is not a directory." << std::endl;
             return -1;
         }
         bool found = false;
@@ -300,7 +300,7 @@ int MyFileSystem::path_to_inode(const std::string& path) {
         }
         // 没找到对应的目录项
         if (!found) {
-            std::cerr << "[Error] " << token << " not found in " << current_path << std::endl;
+            std::cerr << "" << token << " not found in " << current_path << std::endl;
             return -1;
         }
         start = end + 1;
@@ -312,7 +312,7 @@ int MyFileSystem::path_to_inode(const std::string& path) {
     if (!token.empty()) {
         Inode current_inode = read_inode(current_inode_number);
         if (current_inode.type != DIRECTORY) {
-            std::cerr << "[Error] " << current_path << " is not a directory." << std::endl;
+            std::cerr << "" << current_path << " is not a directory." << std::endl;
             return -1;
         }
         bool found = false;
@@ -331,7 +331,7 @@ int MyFileSystem::path_to_inode(const std::string& path) {
              if (found) break;
         }
         if (!found) {
-            std::cerr << "[Error] " << token << " not found in " << current_path << std::endl;
+            std::cerr << "" << token << " not found in " << current_path << std::endl;
             return -1;
         }
     }
@@ -356,14 +356,14 @@ int MyFileSystem::get_parent_inode(const std::string& path) {
 bool MyFileSystem::mkdir(const std::string& path) {
     // 检查目录是否已存在
     if (path_to_inode(path) != -1) {
-        std::cerr << "[Error] Directory already exists." << std::endl;
+        std::cerr << "Directory already exists." << std::endl;
         return false;
     }
 
     // 获取父目录的 inode 编号
     int parent_inode_number = get_parent_inode(path);
     if (parent_inode_number == -1) {
-        std::cerr << "[Error] Invalid path." << std::endl;
+        std::cerr << "Invalid path." << std::endl;
         return false;
     }
 
@@ -404,7 +404,7 @@ bool MyFileSystem::mkdir(const std::string& path) {
             if (entry->inode_number == 0) {
                 std::string filename = path.substr(path.find_last_of('/') + 1);
                 if (filename.length() > MAX_FILE_NAME_LENGTH) {
-                    std::cerr << "[Error] Filename too long." << std::endl;
+                    std::cerr << "Filename too long." << std::endl;
                     free_inode(new_inode_number);
                     return false;
                 }
@@ -422,7 +422,7 @@ bool MyFileSystem::mkdir(const std::string& path) {
     }
 
     if (!entry_added) {
-        std::cerr << "[Error] Parent directory is full." << std::endl;
+        std::cerr << "Parent directory is full." << std::endl;
         free_inode(new_inode_number);
         return false;
     }
@@ -436,7 +436,7 @@ bool MyFileSystem::mkdir(const std::string& path) {
     strcpy(new_inode.path,path.c_str());
     write_inode(new_inode_number, new_inode);
 
-    std::cout << "[Info] Directory created: " << path <<" Inode Number: "<<new_inode_number<<std::endl;
+    std::cout << "Directory created: " << path <<" Inode Number: "<<new_inode_number<<std::endl;
     return true;
 }
 
@@ -445,14 +445,14 @@ bool MyFileSystem::rmdir(const std::string& path) {
     // 检查目录是否存在
     int inode_number = path_to_inode(path);
     if (inode_number == -1) {
-        std::cerr << "[Error] Directory does not exist." << std::endl;
+        std::cerr << "Directory does not exist." << std::endl;
         return false;
     }
 
     // 检查是否为目录
     Inode inode = read_inode(inode_number);
     if (inode.type != DIRECTORY) {
-        std::cerr << "[Error] Not a directory." << std::endl;
+        std::cerr << "Not a directory." << std::endl;
         return false;
     }
 
@@ -466,7 +466,7 @@ bool MyFileSystem::rmdir(const std::string& path) {
             for (int j = 0; j < BLOCK_SIZE / DIRECTORY_ENTRY_SIZE; j++) {
                 DirectoryEntry* entry = reinterpret_cast<DirectoryEntry*>(block_buffer + j * DIRECTORY_ENTRY_SIZE);
                 if (entry->inode_number != 0) {
-                    std::cerr << "[Error] Directory is not empty." << std::endl;
+                    std::cerr << "Directory is not empty." << std::endl;
                     return false;
                 }
             }
@@ -476,7 +476,7 @@ bool MyFileSystem::rmdir(const std::string& path) {
     // 获取父目录的 inode 编号
     int parent_inode_number = get_parent_inode(path);
     if (parent_inode_number == -1) {
-        std::cerr << "[Error] Invalid path." << std::endl;
+        std::cerr << "Invalid path." << std::endl;
         return false;
     }
 
@@ -504,28 +504,53 @@ bool MyFileSystem::rmdir(const std::string& path) {
     }
 
     if (!entry_removed) {
-        std::cerr << "[Error] Failed to remove directory entry from parent." << std::endl;
+        std::cerr << "Failed to remove directory entry from parent." << std::endl;
         return false;
     }
 
     // 释放 inode
     free_inode(inode_number);
 
-    std::cout << "[Info] Directory removed: " << path << std::endl;
+    std::cout << "Directory removed: " << path << std::endl;
     return true;
 }
+//改变目录
+bool MyFileSystem::change_dir(std::string&cur,std::string& des){
+    if (des==".."){
+        if (cur=="/") return false;
+        cur=cur.substr(0,cur.size()-1);
+        cur=cur.substr(0,cur.find_last_of('/'));
+        if (cur=="") cur="/";
+        return true;
+    }
+    if (des[0]!='/') des=cur+des;
+    int inode_number = path_to_inode(des);
+    if (inode_number == -1) {
+        std::cerr << "Directory does not exist." << std::endl;
+        return false;
+    }
+
+    Inode inode = read_inode(inode_number);
+    if (inode.type != DIRECTORY) {
+        std::cerr << "Not a directory." << std::endl;
+        return false;
+    }
+    cur=des+"/";
+    return true;
+}
+
 // 创建文件
 bool MyFileSystem::create(const std::string& path) {
     // 检查文件是否已存在
     if (path_to_inode(path) != -1) {
-        std::cerr << "[Error] File already exists." << std::endl;
+        std::cerr << "File already exists." << std::endl;
         return false;
     }
 
     // 获取父目录的 inode 编号
     int parent_inode_number = get_parent_inode(path);
     if (parent_inode_number == -1) {
-        std::cerr << "[Error] Invalid path." << std::endl;
+        std::cerr << "Invalid path." << std::endl;
         return false;
     }
 
@@ -566,7 +591,7 @@ bool MyFileSystem::create(const std::string& path) {
             if (entry->inode_number == 0) {
                 std::string filename = path.substr(path.find_last_of('/') + 1);
                 if (filename.length() > MAX_FILE_NAME_LENGTH) {
-                    std::cerr << "[Error] Filename too long." << std::endl;
+                    std::cerr << "Filename too long." << std::endl;
                     free_inode(new_inode_number);
                     return false;
                 }
@@ -584,7 +609,7 @@ bool MyFileSystem::create(const std::string& path) {
     }
 
     if (!entry_added) {
-        std::cerr << "[Error] Parent directory is full." << std::endl;
+        std::cerr << "Parent directory is full." << std::endl;
         free_inode(new_inode_number);
         return false;
     }
@@ -598,7 +623,7 @@ bool MyFileSystem::create(const std::string& path) {
     strcpy(new_inode.path,path.c_str());
     write_inode(new_inode_number, new_inode);
 
-    std::cout << "[Info] File created: " << path<< " Inode Number: "<<new_inode_number << std::endl;
+    std::cout << "File created: " << path<< " Inode Number: "<<new_inode_number << std::endl;
     return true;
 }
 
@@ -607,21 +632,21 @@ bool MyFileSystem::remove(const std::string& path) {
     // 检查文件是否存在
     int inode_number = path_to_inode(path);
     if (inode_number == -1) {
-        std::cerr << "[Error] File does not exist." << std::endl;
+        std::cerr << "File does not exist." << std::endl;
         return false;
     }
 
     // 检查是否为普通文件
     Inode inode = read_inode(inode_number);
     if (inode.type != REGULAR_FILE) {
-        std::cerr << "[Error] Not a regular file." << std::endl;
+        std::cerr << "Not a regular file." << std::endl;
         return false;
     }
 
     // 获取父目录的 inode 编号
     int parent_inode_number = get_parent_inode(path);
     if (parent_inode_number == -1) {
-        std::cerr << "[Error] Invalid path." << std::endl;
+        std::cerr << "Invalid path." << std::endl;
         return false;
     }
 
@@ -649,14 +674,14 @@ bool MyFileSystem::remove(const std::string& path) {
     }
 
     if (!entry_removed) {
-        std::cerr << "[Error] Failed to remove directory entry from parent." << std::endl;
+        std::cerr << "Failed to remove directory entry from parent." << std::endl;
         return false;
     }
 
     // 释放 inode (包括释放数据块)
     free_inode(inode_number);
 
-    std::cout << "[Info] File removed: " << path << std::endl;
+    std::cout << "File removed: " << path << std::endl;
     return true;
 }
 
@@ -664,13 +689,13 @@ bool MyFileSystem::remove(const std::string& path) {
 int MyFileSystem::open(const std::string& path) {
     int inode_number = path_to_inode(path);
     if (inode_number == -1) {
-        std::cerr << "[Error] File does not exist." << std::endl;
+        std::cerr << "File does not exist." << std::endl;
         return -1;
     }
 
     Inode inode = read_inode(inode_number);
     if (inode.type != REGULAR_FILE) {
-        std::cerr << "[Error] Not a regular file." << std::endl;
+        std::cerr << "Not a regular file." << std::endl;
         return -1;
     }
     
@@ -687,7 +712,7 @@ bool MyFileSystem::read(int inode_number, unsigned int offset, unsigned int leng
 
     // 检查偏移量是否越界
     if (offset >= inode.size) {
-        std::cerr << "[Error] Offset out of range." << std::endl;
+        std::cerr << "Offset out of range." << std::endl;
         return false;
     }
 
@@ -712,7 +737,7 @@ bool MyFileSystem::read(int inode_number, unsigned int offset, unsigned int leng
         }
 
         if (block_number == 0) {
-            std::cerr << "[Error] Data block not allocated." << std::endl;
+            std::cerr << "Data block not allocated." << std::endl;
             return false;
         }
 
@@ -795,24 +820,20 @@ bool MyFileSystem::write(int inode_number, unsigned int offset, unsigned int len
 bool MyFileSystem::list(const std::string& path) {
     int inode_number = path_to_inode(path);
     if (inode_number == -1) {
-        std::cerr << "[Error] Directory does not exist." << std::endl;
+        std::cerr << "Directory does not exist." << std::endl;
         return false;
     }
 
     Inode inode = read_inode(inode_number);
     if (inode.type != DIRECTORY) {
-        std::cerr << "[Error] Not a directory." << std::endl;
+        std::cerr << "Not a directory." << std::endl;
         return false;
     }
 
     inode.accessed_time = time(nullptr);
     write_inode(inode_number, inode);
 
-    std::cout << "[Info] Listing directory: " << path << std::endl;
-    if(inode.size==0){
-        std::cerr<<"[Error] Directory "<<path<<" is Empty."<<std::endl;
-        return -1;
-    }
+    std::cout << "Listing directory: " << path << std::endl;
     // 存储目录项信息的 vector
     std::vector<std::vector<std::string>> rows;
 

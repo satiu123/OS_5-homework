@@ -5,8 +5,9 @@ project("myfs"
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
+set(CMAKE_CXX_EXTENSIONS NO)
+#使用libc++库
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 
 add_executable(main)
 

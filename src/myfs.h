@@ -5,6 +5,7 @@
 #include <cstring>
 #include <ctime>
 #include <cmath>
+#include "util.h"
 const int BLOCK_SIZE = 4096;  // 数据块大小
 const int MAX_FILE_NAME_LENGTH = 255;
 
@@ -95,7 +96,7 @@ public:
 
     // 创建文件
     bool create(const std::string& path);
-
+    bool change_dir(std::string&cur,std::string& des);
     // 删除文件
     bool remove(const std::string& path);
 
@@ -107,7 +108,6 @@ public:
     bool read(int inode_number, char* buffer);
     // 写入文件
     bool write(int inode_number, unsigned int offset, unsigned int length, const char* buffer);
-
     // 列出目录内容
     bool list(const std::string& path);
 
